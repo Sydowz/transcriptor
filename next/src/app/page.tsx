@@ -9,10 +9,10 @@ import {
   Text,
   TextArea,
 } from "@radix-ui/themes";
-import { PromptSelect } from "./components/prompt-select";
-import { ModelSelect } from "./components/model-select";
-import { VideoInputForm } from "./components/video-input-form";
-import { AppHeader } from "./components/app-header";
+import { PromptSelect } from "../components/prompt-select";
+import { ModelSelect } from "../components/model-select";
+import { VideoInputForm } from "../components/video-input-form";
+import { AppHeader } from "../components/app-header";
 
 export default function Home() {
   return (
