@@ -21,10 +21,12 @@ export function AppHeader() {
 
         <Separator orientation="vertical" className="h-6" />
 
-        <Button variant="outline">
-          <GitHubLogoIcon className="h-4 w-4" />
-          Github
-        </Button>
+        <a href="https://github.com/Jonatan966/transcriptor" target="_blank">
+          <Button variant="outline">
+            <GitHubLogoIcon className="h-4 w-4" />
+            Github
+          </Button>
+        </a>
       </Flex>
     </Flex>
   );
