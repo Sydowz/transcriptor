@@ -11,7 +11,7 @@ export function AppHeader() {
       className="border-b border-gray-600"
     >
       <Text className="text-xl" weight="bold">
-        upload.ai
+        transcriptor.ai
       </Text>
 
       <Flex align="center" gap="3">
