@@ -1,3 +1,5 @@
+"use client";
+
 import { MagicWandIcon } from "@radix-ui/react-icons";
 import {
   Box,
@@ -13,8 +15,31 @@ import { PromptSelect } from "../components/prompt-select";
 import { ModelSelect } from "../components/model-select";
 import { VideoInputForm } from "../components/video-input-form";
 import { AppHeader } from "../components/app-header";
+import { useState } from "react";
+import { useCompletion } from "ai/react";
 
 export default function Home() {
+  const [temperature, setTemperature] = useState(0.5);
+  const [videoId, setVideoId] = useState("");
+
+  const {
+    input,
+    completion,
+    isLoading,
+    handleInputChange,
+    setInput,
+    handleSubmit,
+  } = useCompletion({
+    api: `${process.env.NEXT_PUBLIC_VERCEL_URL}/api/ai/complete`,
+    body: {
+      videoId,
+      temperature,
+    },
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
   return (
     <Flex direction="column" className="min-h-screen">
       <AppHeader />
@@ -25,12 +50,16 @@ export default function Home() {
             <TextArea
               placeholder="Inclua o prompt para a IA..."
               className="resize-none p-4 leading-relaxed"
+              value={input}
+              onChange={handleInputChange}
+              disabled={isLoading}
             />
 
             <TextArea
               placeholder="Resultado gerado pela IA"
               readOnly
               className="resize-none p-4 leading-relaxed"
+              value={completion}
             />
           </Grid>
 
@@ -42,13 +71,13 @@ export default function Home() {
         </Flex>
 
         <Box is="aside" className="w-80 space-y-6">
-          <VideoInputForm />
+          <VideoInputForm onVideoUploaded={(id) => setVideoId(id)} />
           <Separator size="4" />
 
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <Flex direction="column" gap="2">
               <label className="text-sm font-medium leading-none">Prompt</label>
-              <PromptSelect />
+              <PromptSelect onPromptSelected={setInput} />
             </Flex>
 
             <Flex direction="column" gap="2">
@@ -71,7 +100,13 @@ export default function Home() {
                 Temperatura
               </label>
 
-              <Slider min={0} max={1} step={0.1} />
+              <Slider
+                min={0}
+                max={1}
+                step={0.1}
+                onValueChange={([value]) => setTemperature(value)}
+                value={[temperature]}
+              />
 
               <Text
                 is="span"
@@ -84,7 +119,11 @@ export default function Home() {
 
             <Separator size="4" />
 
-            <Button type="submit" className="w-full">
+            <Button
+              type="submit"
+              className="w-full"
+              disabled={isLoading || !videoId}
+            >
               Executar <MagicWandIcon className="ml-2 w-4 h-4" />
             </Button>
           </form>

@@ -1,11 +1,16 @@
 "use client";
 
+import { api } from "@/lib/axios";
 import { convertVideoToAudio } from "@/usecases/convert-video-to-audio";
 import { UploadIcon, FileIcon } from "@radix-ui/react-icons";
 import { Button, Separator, TextArea } from "@radix-ui/themes";
-import { useState, useRef, ChangeEvent, useMemo } from "react";
+import { useState, useRef, ChangeEvent, useMemo, FormEvent } from "react";
 
 type Status = "waiting" | "converting" | "uploading" | "generating" | "success";
+
+interface VideoInputFormProps {
+  onVideoUploaded(videoId: string): void;
+}
 
 const statusMessages: Record<Status, React.ReactNode> = {
   converting: "Convertendo...",
@@ -19,7 +24,7 @@ const statusMessages: Record<Status, React.ReactNode> = {
   ),
 };
 
-export function VideoInputForm() {
+export function VideoInputForm(props: VideoInputFormProps) {
   const [videoFile, setVideoFile] = useState<File | null>(null);
   const [status, setStatus] = useState<Status>("waiting");
 
@@ -37,6 +42,42 @@ export function VideoInputForm() {
     setVideoFile(selectedFile);
   }
 
+  async function handleUploadVideo(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+
+    const prompt = promptInputRef.current?.value;
+
+    if (!prompt || !videoFile) {
+      return;
+    }
+
+    setStatus("converting");
+
+    const audioFile = await convertVideoToAudio(videoFile);
+
+    const data = new FormData();
+
+    data.append("file", audioFile);
+
+    setStatus("uploading");
+
+    const response = await api.post("/videos", data);
+
+    const videoId = response.data.id;
+
+    setStatus("generating");
+
+    await api.post(`/videos/${videoId}/transcription`, {
+      prompt,
+    });
+
+    setStatus("success");
+
+    props.onVideoUploaded(videoId);
+
+    console.log("finalizou");
+  }
+
   const previewURL = useMemo(() => {
     if (!videoFile) {
       return null;
@@ -46,7 +87,7 @@ export function VideoInputForm() {
   }, [videoFile]);
 
   return (
-    <form className="space-y-4">
+    <form className="space-y-4" onSubmit={handleUploadVideo}>
       <label
         htmlFor="video"
         className="relative aspect-video border rounded-md flex cursor-pointer border-dashed text-sm flex-col gap-2 items-center justify-center text-muted-foreground hover:bg-primary/5 transition-colors"

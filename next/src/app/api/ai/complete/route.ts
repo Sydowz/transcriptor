@@ -11,7 +11,9 @@ export async function POST(request: NextRequest) {
     temperature: z.number().min(0).max(1).default(0.5),
   });
 
-  const { videoId, prompt, temperature } = bodySchema.parse(request.body);
+  const { videoId, prompt, temperature } = bodySchema.parse(
+    await request.json()
+  );
 
   const video = await prisma.video.findUniqueOrThrow({
     where: {
