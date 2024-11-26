@@ -19,12 +19,12 @@ export async function GET(request: NextRequest) {
         }
       }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in GET /api/prompts:', error);
     return NextResponse.json(
       { 
         error: 'Internal Server Error',
-        details: process.env.NODE_ENV === 'development' ? error.message : undefined
+        details: process.env.NODE_ENV === 'development' ? error?.message : undefined
       },
       {
         status: 500,

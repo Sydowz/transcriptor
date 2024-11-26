@@ -77,10 +77,13 @@ export async function POST(request: NextRequest) {
         }
       }
     );
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error in POST /api/videos:', error);
     return NextResponse.json(
-      { error: 'Internal Server Error' },
+      { 
+        error: 'Internal Server Error',
+        details: process.env.NODE_ENV === 'development' ? error?.message : undefined
+      },
       { 
         status: 500,
         headers: {
