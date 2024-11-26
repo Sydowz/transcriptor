@@ -1,13 +1,20 @@
+# Use uma imagem Node.js como base
 FROM node:18-alpine
 
+# Define o diretório de trabalho dentro do contêiner
 WORKDIR /app
 
+# Copia os arquivos de dependências
 COPY package*.json ./
+
+# Instala as dependências
 RUN npm install
 
+# Copia todos os arquivos para dentro do contêiner
 COPY . .
 
-ENV PORT=8000
+# Expõe a porta usada pela aplicação
 EXPOSE 8000
 
-CMD ["npm", "run", "start"]
+# Comando para iniciar a aplicação
+CMD ["npm", "start"]
