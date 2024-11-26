@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { initDatabase } from "@/lib/db-init";
 import { NextResponse } from "next/server";
 
+export const runtime = 'edge';
+
 export async function GET() {
   try {
     // Tenta inicializar o banco de dados primeiro
