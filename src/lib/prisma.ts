@@ -7,10 +7,7 @@ const prismaClientSingleton = () => {
         url: process.env.DATABASE_URL
       }
     },
-    log: ['error', 'warn'],
-    // Aumentar os timeouts e configurar reconexão
-    connectionTimeout: 60000, // 60 segundos
-    requestTimeout: 60000, // 60 segundos
+    log: ['error', 'warn']
   })
 }
 
